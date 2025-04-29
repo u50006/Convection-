@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Convection Handout</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            background-color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .section-title {
+            border-bottom: 2px solid #4299e1;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            font-size: 1.75rem;
+        }
+        .quiz-option {
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .quiz-option:hover {
+            background-color: #ebf4ff;
+        }
+        .correct {
+            background-color: #c6f6d5;
+            border-color: #68d391;
+        }
+        .incorrect {
+            background-color: #fed7d7;
+            border-color: #fc8181;
+        }
+        .simulation-container {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(180deg, #3182ce 0%, #63b3ed 100%);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            transition: transform 0.1s ease;
+        }
+        .interactive-diagram {
+            position: relative;
+            margin: 2rem auto;
+        }
+        .info-box {
+            padding: 1rem;
+            background-color: #ebf8ff;
+            border-left: 4px solid #4299e1;
+            margin: 1rem 0;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab-active {
+            border-bottom: 3px solid #4299e1;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0 0.5rem 0.5rem 0.5rem;
+        }
+        .tab-content-active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-blue-50 min-h-screen p-4">
+    <div class="container mx-auto max-w-5xl bg-white rounded-lg shadow-lg p-6 mb-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-blue-700 mb-2">Convection</h1>
+            <p class="text-xl text-gray-600">The Transfer of Heat Through Fluid Movement</p>
+        </header>
+
+        <!-- Introduction Section -->
+        <section id="introduction" class="section">
+            <h2 class="section-title text-blue-700">Introduction to Convection</h2>
+            <p class="mb-4">
+                Convection is one of the three main methods of heat transfer (alongside conduction and radiation). 
+                It is a fascinating process that plays a crucial role in many natural phenomena, from daily weather patterns to 
+                ocean currents and even bird flight. This interactive handout will explore the mechanisms of convection,
+                demonstrate how it works through experiments, and explore its many real-world applications.
+            </p>
+            <div class="info-box">
+                <p class="font-semibold text-blue-800">Key Point:</p>
+                <p>Convection can only occur in fluids (liquids and gases), not in solids, because it requires the physical movement of molecules.</p>
+            </div>
+        </section>
+
+        <!-- Definition Section -->
+        <section id="definition" class="section">
+            <h2 class="section-title text-blue-700">What is Convection?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                <div>
+                    <p class="mb-4">
+                        <span class="font-bold">Definition:</span> "The method of transfer of heat due to bulk movement of molecules in fluids is called convection."
+                    </p>
+                    <p class="mb-4">
+                        We can also define it as "convection is the transfer of heat energy due to the transfer of the fluid itself."
+                    </p>
+                    <p class="mb-4">
+                        <span class="font-bold">Important characteristics:</span>
+                    </p>
+                    <ul class="list-disc ml-6 mb-4">
+                        <li>Convection only occurs in liquids and gases (fluids)</li>
+                        <li>It involves the actual movement of heated particles</li>
+                        <li>Convection is driven by differences in density caused by temperature differences</li>
+                        <li>It forms circular patterns called convection currents</li>
+                    </ul>
+                </div>
+                <div>
+                    <img src="https://www.schoolphysics.co.uk/age11-14/Heat%20energy/Transfer%20of%20heat%20energy/text/Convection_/images/4.png" alt="Convection Current Diagram" class="rounded-lg shadow-md w-full">
+                    <p class="text-sm text-center text-gray-500 mt-2">Simple diagram of a convection current in a fluid</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mechanism Section -->
+        <section id="mechanism" class="section">
+            <h2 class="section-title text-blue-700">How Convection Works</h2>
+            <p class="mb-4">Convection works through a cycle of heating, expansion, rising, cooling, and sinking. Let's explore this mechanism step by step:</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
+                <ol class="list-decimal ml-6">
+                    <li class="mb-2"><span class="font-semibold">Heating:</span> A fluid (liquid or gas) is heated at the bottom or from one side.</li>
+                    <li class="mb-2"><span class="font-semibold">Molecular Expansion:</span> As explained by Kinetic Molecular Theory, the heated molecules gain energy, move faster, and spread apart.</li>
+                    <li class="mb-2"><span class="font-semibold">Density Decrease:</span> As molecules spread apart, the heated fluid becomes less dense than the surrounding fluid.</li>
+                    <li class="mb-2"><span class="font-semibold">Rising:</span> The less dense, warmer fluid rises to the top.</li>
+                    <li class="mb-2"><span class="font-semibold">Cooling:</span> As it moves away from the heat source, the fluid cools down.</li>
+                    <li class="mb-2"><span class="font-semibold">Density Increase:</span> As it cools, molecules slow down, move closer together, and the fluid becomes more dense.</li>
+                    <li class="mb-2"><span class="font-semibold">Sinking:</span> The cooler, denser fluid sinks back down.</li>
+                    <li class="mb-2"><span class="font-semibold">Cycle Continues:</span> The fluid reaches the heat source again, reheats, and the cycle repeats, forming a convection current.</li>
+                </ol>
+                <div>
+                    <div class="simulation-container" id="convectionSimulation">
+                        <!-- Particles will be added by JavaScript -->
+                    </div>
+                    <div class="flex justify-between mt-2">
+                        <button id="startSimulation" class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">Start Simulation</button>
+                        <button id="stopSimulation" class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded">Stop Simulation</button>
+                    </div>
+                    <p class="text-sm text-center text-gray-500 mt-2">Interactive simulation of convection currents</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p class="font-semibold text-blue-800">Key Concept: What happens when heating water?</p>
+                <p>When water is heated on a stove, molecules at the bottom gain heat energy first. According to Kinetic Molecular Theory, the intermolecular forces between these water molecules decrease as temperature rises, and the distance between molecules increases. This makes the water less dense at the bottom, causing it to rise. The dense cold water at the top sinks to fill the gap and also gains heat energy, continuing the cycle.</p>
+            </div>
+        </section>
+
+        <!-- Experiments Section -->
+        <section id="experiments" class="section">
+            <h2 class="section-title text-blue-700">Experiments to Demonstrate Convection</h2>
+            
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-blue-600 mb-3">Experiment 1: Potassium Permanganate and Water</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <h4 class="font-semibold">Materials needed:</h4>
+                        <ul class="list-disc ml-6 mb-4">
+                            <li>A glass beaker or clear container</li>
+                            <li>Water</li>
+                            <li>Potassium permanganate crystals</li>
+                            <li>Heat source (bunsen burner or hot plate)</li>
+                        </ul>
+                        
+                        <h4 class="font-semibold">Procedure:</h4>
+                        <ol class="list-decimal ml-6 mb-4">
+                            <li>Fill the beaker with water</li>
+                            <li>Place a few potassium permanganate crystals at the bottom</li>
+                            <li>Heat the beaker gently from the bottom</li>
+                            <li>Observe the purple streaks rising from the crystals</li>
+                        </ol>
+                        
+                        <h4 class="font-semibold">Observation:</h4>
+                        <p>A stream of potassium permanganate travels upward and produces a convectional current when the beaker is heated, making the convection currents visible.</p>
+                    </div>
+                    <div>
+                        <img src="https://www.daviddarling.info/images/convection_experiment.jpg" alt="Convection experiment with potassium permanganate" class="rounded-lg shadow-md w-full">
+                        <p class="text-sm text-center text-gray-500 mt-2">Potassium permanganate showing convection currents in water</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-xl font-bold text-blue-600 mb-3">Experiment 2: Colored Ice Cubes and Water</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    <div>
+                        <h4 class="font-semibold">Materials needed:</h4>
+                        <ul class="list-disc ml-6 mb-4">
+                            <li>A large clear container</li>
+                            <li>Warm water</li>
+                            <li>Cold water</li>
+                            <li>Food coloring (red and blue)</li>
+                            <li>Ice cubes (with blue food coloring)</li>
+                        </ul>
+                        
+                        <h4 class="font-semibold">Procedure:</h4>
+                        <ol class="list-decimal ml-6 mb-4">
+                            <li>Fill half of the container with warm water</li>
+                            <li>Add a few drops of red food coloring to the warm water</li>
+                            <li>Place blue-colored ice cubes on one side</li>
+                            <li>Observe the movement of the colored water</li>
+                        </ol>
+                        
+                        <h4 class="font-semibold">Observation:</h4>
+                        <p>You will see that red food color on the warmer side will rise first and then it will move towards the cooler blue ice side. The cold water, being denser, sinks, and its place is filled by the red-colored warm water, creating visible convection currents.</p>
+                    </div>
+                    <div>
+                        <img src="https://thehomeschoolscientist.com/wp-content/uploads/2016/03/convection-diagram.jpg" alt="Convection experiment with colored water" class="rounded-lg shadow-md w-full">
+                        <p class="text-sm text-center text-gray-500 mt-2">Colored water showing convection currents</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Applications Section -->
+        <section id="applications" class="section">
+            <h2 class="section-title text-blue-700">Real-World Applications of Convection</h2>
+            
+            <!-- Tabbed Interface for Applications -->
+            <div class="mb-6">
+                <div class="flex border-b border-gray-200">
+                    <div class="tab tab-active" data-tab="ocean">Ocean Convection</div>
+                    <div class="tab" data-tab="breezes">Land & Sea Breezes</div>
+                    <div class="tab" data-tab="birds">Bird Flight</div>
+                    <div class="tab" data-tab="hurricanes">Hurricanes</div>
+                </div>
+                
+                <!-- Ocean Convection Content -->
+                <div id="ocean-tab" class="tab-content tab-content-active">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Convection and Marine Life</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div>
+                            <p class="mb-3">Convection is a crucial process that helps support marine life in the oceans. It involves the movement of seawater driven by differences in temperature and salinity across the globe.</p>
+                            
+                            <h4 class="font-semibold text-blue-600 mt-4">Upwelling and Marine Ecosystems</h4>
+                            <p class="mb-3">Upwelling typically occurs along coastlines where winds blow parallel to the shore. As surface water is pushed away from the coast, it is replaced by water rising from below. This deeper water is usually colder and richer in nutrients.</p>
+                            
+                            <h4 class="font-semibold text-blue-600 mt-4">Oxygen Distribution</h4>
+                            <p class="mb-3">Marine animals need oxygen to live. Most oxygen is dissolved in top water exposed to air. Convection causes this water to go deep into the ocean floor, supporting life at all depths.</p>
+                            
+                            <h4 class="font-semibold text-blue-600 mt-4">Temperature Regulation</h4>
+                            <p>Due to upwelling, warm water rises and takes heat to the top. Convection distributes heat throughout the ocean, helping to stabilize temperature. Also, the movement of warm and cold water around the globe affects climate patterns, which can impact the habitats of marine life.</p>
+                        </div>
+                        <div>
+                            <img src="https://oceanexplorer.noaa.gov/facts/media/upwelling-800.jpg" alt="Ocean upwelling diagram" class="rounded-lg shadow-md w-full">
+                            <p class="text-sm text-center text-gray-500 mt-2">Diagram showing ocean upwelling process</p>
+                            
+                            <img src="https://oceanservice.noaa.gov/facts/upwelling.jpg" class="rounded-lg shadow-md w-full mt-4" alt="Coastal upwelling and marine life">
+                            <p class="text-sm text-center text-gray-500 mt-2">Coastal upwelling bringing nutrients to support marine life</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Land & Sea Breezes Content -->
+                <div id="breezes-tab" class="tab-content">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Land and Sea Breezes</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-6">
+                        <div>
+                            <h4 class="font-semibold text-blue-600">Sea Breeze (Day)</h4>
+                            <p class="mb-4">During the day, land heats up more quickly than the sea due to its lower specific heat. Therefore, air above the land becomes hot, expands, and becomes less dense. This hot air above land rises up, and cool air above the sea moves toward the land to fill the gap, creating a sea breeze.</p>
+                            
+                            <h4 class="font-semibold text-blue-600">Land Breeze (Night)</h4>
+                            <p>At night, the temperature of land falls more quickly than that of water. Due to this, air above the sea is warmer than the air above the land. Therefore, hot air above the water rises up, and cool air from the land moves toward the sea to fill the gap, creating a land breeze.</p>
+                        </div>
+                        <div>
+                            <img src="https://www.science-sparks.com/wp-content/uploads/2022/06/Land-and-sea-breeze-883x1024.jpeg" alt="Land and sea breeze diagram" class="rounded-lg shadow-md w-full">
+                            <p class="text-sm text-center text-gray-500 mt-2">Diagram showing land and sea breeze formation</p>
+                        </div>
+                    </div>
+                    <div class="interactive-diagram">
+                        <div class="flex justify-center mb-4">
+                            <button id="showDayBreeze" class="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded mr-4">Show Day (Sea Breeze)</button>
+                            <button id="showNightBreeze" class="bg-blue-900 hover:bg-blue-800 text-white py-2 px-4 rounded">Show Night (Land Breeze)</button>
+                        </div>
+                        <div class="bg-blue-100 p-4 rounded-lg" id="breezeContainer">
+                            <img src="https://cdn.britannica.com/69/62669-050-FBD897CC/paths-sea-breeze-land.jpg" alt="Sea and land breeze" class="w-full rounded shadow-md" id="breezeImage">
+                            <p class="text-center mt-2" id="breezeCaption">Sea breeze during the day: warm air rises over land, cool air from sea flows inland</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Birds Flight Content -->
+                <div id="birds-tab" class="tab-content">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Thermals and Birds' Flight</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div>
+                            <p class="mb-4">During the day, the Sun heats the land unevenly. The air above hot areas becomes less dense and rises from the ground. This rising hot air surrounded by cooler air forms an air column called a thermal.</p>
+                            
+                            <h4 class="font-semibold text-blue-600 mt-3">How Birds Use Thermals</h4>
+                            <p class="mb-4">Birds like eagles, hawks, vultures, etc., are expert thermal riders. They ride on this rising air (thermals). They glide between thermals and maintain their high altitude without flapping their wings for extended periods of time, conserving energy.</p>
+                            
+                            <h4 class="font-semibold text-blue-600 mt-3">Benefits of Thermal Soaring</h4>
+                            <ul class="list-disc ml-6">
+                                <li>Energy conservation during long flights</li>
+                                <li>Efficient hunting by maintaining altitude with minimal effort</li>
+                                <li>Migration assistance, allowing birds to travel long distances</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <img src="https://aerospaceweb.org/question/nature/thermals/thermals2.jpg" alt="Birds using thermals" class="rounded-lg shadow-md w-full mb-4">
+                            <p class="text-sm text-center text-gray-500 mb-4">Birds using thermal convection currents to soar</p>
+                            
+                            <img src="https://aerospaceweb.org/question/nature/thermals/thermals1.jpg" alt="Thermal diagram for bird flight" class="rounded-lg shadow-md w-full">
+                            <p class="text-sm text-center text-gray-500">Diagram showing how birds utilize thermal convection currents</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hurricanes Content -->
+                <div id="hurricanes-tab" class="tab-content">
+                    <h3 class="text-xl font-bold text-blue-600 mb-3">Hurricanes and Cyclones</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div>
+                            <p class="mb-4">Hurricanes form over warm ocean waters. The warm water causes evaporation and this moist air rises due to convection. As it rises, it cools and forms clouds through condensation.</p>
+                            
+                            <p class="mb-4">This condensation releases latent heat which warms the surrounding atmosphere, making the air there lighter. As a result, the air continues to rise, lowering the atmospheric pressure at its surface.</p>
+                            
+                            <p class="mb-4">The Earth's rotation causes this rising air to spin, forming a cyclonic system. This process creates a powerful storm system driven primarily by convection currents in the atmosphere.</p>
+                            
+                            <h4 class="font-semibold text-blue-600 mt-3">Hurricane Formation Steps:</h4>
+                            <ol class="list-decimal ml-6">
+                                <li>Warm ocean water evaporates</li>
+                                <li>Moist air rises through convection</li>
+                                <li>Rising air cools and condenses, forming clouds</li>
+                                <li>Condensation releases heat, further warming air</li>
+                                <li>More warm air rises, creating low pressure at surface</li>
+                                <li>Surrounding air flows in to fill low pressure area</li>
+                                <li>Earth's rotation causes inward-flowing air to spiral</li>
+                                <li>Continuous convection strengthens the storm</li>
+                            </ol>
+                        </div>
+                        <div>
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Hurricane-en.svg" alt="Hurricane formation diagram" class="rounded-lg shadow-md w-full mb-4">
+                            <p class="text-sm text-center text-gray-500 mb-4">Diagram showing hurricane structure and formation</p>
+                            
+                            <img src="https://scijinks.gov/hurricane/hurricane_diagram_large.png" alt="Hurricane convection diagram" class="rounded-lg shadow-md w-full">
+                            <p class="text-sm text-center text-gray-500">Detailed view of convection currents in hurricane formation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Quiz Section -->
+        <section id="quiz" class="section">
+            <h2 class="section-title text-blue-700">Test Your Knowledge</h2>
+            <p class="mb-4">Let's see how well you understand convection with this quick quiz!</p>
+            
+            <div class="quiz-container">
+                <!-- Question 1 -->
+                <div class="quiz-question mb-6" id="q1">
+                    <p class="font-bold mb-2">1. Which of the following is NOT a requirement for convection to occur?</p>
+                    <div class="quiz-option" data-correct="false">A fluid medium (liquid or gas)</div>
+                    <div class="quiz-option" data-correct="false">A temperature difference</div>
+                    <div class="quiz-option" data-correct="false">Gravity</div>
+                    <div class="quiz-option" data-correct="true">A solid medium</div>
+                    <div class="feedback mt-2 hidden"></div>
+                </div>
+                
+                <!-- Question 2 -->
+                <div class="quiz-question mb-6" id="q2">
+                    <p class="font-bold mb-2">2. When a fluid is heated from the bottom, why does it rise?</p>
+                    <div class="quiz-option" data-correct="true">It becomes less dense than the surrounding fluid</div>
+                    <div class="quiz-option" data-correct="false">It becomes more dense than the surrounding fluid</div>
+                    <div class="quiz-option" data-correct="false">It is pushed up by electromagnetic forces</div>
+                    <div class="quiz-option" data-correct="false">It is repelled by the heat source</div>
+                    <div class="feedback mt-2 hidden"></div>
+                </div>
+                
+                <!-- Question 3 -->
+                <div class="quiz-question mb-6" id="q3">
+                    <p class="font-bold mb-2">3. Which of the following is an example of natural convection?</p>
+                    <div class="quiz-option" data-correct="false">A fan blowing air across a room</div>
+                    <div class="quiz-option" data-correct="true">Sea breezes forming due to uneven heating of land and water</div>
+                    <div class="quiz-option" data-correct="false">Water boiling in a pot stirred with a spoon</div>
+                    <div class="quiz-option" data-correct="false">Air conditioning system with fans</div>
+                    <div class="feedback mt-2 hidden"></div>
+                </div>
+                
+                <!-- Question 4 -->
+                <div class="quiz-question mb-6" id="q4">
+                    <p class="font-bold mb-2">4. How does ocean upwelling help marine life?</p>
+                    <div class="quiz-option" data-correct="false">By reducing the temperature of the water</div>
+                    <div class="quiz-option" data-correct="false">By creating waves that oxygenate the water</div>
+                    <div class="quiz-option" data-correct="true">By bringing nutrient-rich deep water to the surface</div>
+                    <div class="quiz-option" data-correct="false">By eliminating harmful bacteria</div>
+                    <div class="feedback mt-2 hidden"></div>
+                </div>
+                
+                <!-- Question 5 -->
+                <div class="quiz-question mb-6" id="q5">
+                    <p class="font-bold mb-2">5. How do birds like eagles and hawks use convection currents?</p>
+                    <div class="quiz-option" data-correct="false">They use downward convection currents to dive quickly</div>
+                    <div class="quiz-option" data-correct="true">They ride upward thermals to gain altitude without flapping their wings</div>
+                    <div class="quiz-option" data-correct="false">They create their own convection currents with their wing movements</div>
+                    <div class="quiz-option" data-correct="false">They avoid convection currents as they make flight difficult</div>
+                    <div class="feedback mt-2 hidden"></div>
+                </div>
+                
+                <button id="submitQuiz" class="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded mt-4">Submit Answers</button>
+                <p id="quizResults" class="mt-4 font-bold"></p>
+            </div>
+        </section>
+
+        <!-- Conclusion Section -->
+        <section id="conclusion" class="section">
+            <h2 class="section-title text-blue-700">Conclusion</h2>
+            <p class="mb-4">
+                Convection is a fundamental process of heat transfer that shapes our world in countless ways. From the daily weather patterns we experience to the dynamic ecosystems of our oceans, convection currents drive the movement of heat and matter in fluids around us.
+            </p>
+            <p class="mb-4">
+                Understanding convection helps us make sense of many natural phenomena and has practical applications in fields ranging from meteorology to engineering, cooking, and building design.
+            </p>
+            <p>
+                The next time you observe weather patterns, watch birds soaring high above, or even boil water for tea, remember the invisible but powerful convection currents at work!
+            </p>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 py-4">
+        <p>&copy; 2024 Interactive Convection Handout</p>
+    </footer>
+
+    <script>
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => {
+                    t.classList.remove('tab-active');
+                });
+                
+                // Add active class to clicked tab
+                tab.classList.add('tab-active');
+                
+                // Hide all tab content
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('tab-content-active');
+                });
+                
+                // Show the corresponding content
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('tab-content-active');
+            });
+        });
+        
+        // Land and Sea Breeze interactivity
+        document.getElementById('showDayBreeze').addEventListener('click', function() {
+            document.getElementById('breezeImage').src = 'https://cdn.britannica.com/69/62669-050-FBD897CC/paths-sea-breeze-land.jpg';
+            document.getElementById('breezeCaption').textContent = 'Sea breeze during the day: warm air rises over land, cool air from sea flows inland';
+        });
+        
+        document.getElementById('showNightBreeze').addEventListener('click', function() {
+            document.getElementById('breezeImage').src = 'https://www.brisbanehotairballooning.com.au/wp-content/uploads/seabreeze.gif';
+            document.getElementById('breezeCaption').textContent = 'Land breeze during the night: warm air rises over sea, cool air from land flows seaward';
+        });
+        
+        // Quiz functionality
+        document.getElementById('submitQuiz').addEventListener('click', function() {
+            let score = 0;
+            document.querySelectorAll('.quiz-question').forEach(question => {
+                let options = question.querySelectorAll('.quiz-option');
+                let feedback = question.querySelector('.feedback');
+                let hasCorrectAnswer = false;
+                
+                options.forEach(option => {
+                    if (option.classList.contains('selected') && option.dataset.correct === 'true') {
+                        option.classList.add('correct');
+                        option.classList.remove('incorrect');
+                        score++;
+                        hasCorrectAnswer = true;
+                    } else if (option.classList.contains('selected') && option.dataset.correct === 'false') {
+                        option.classList.add('incorrect');
+                        option.classList.remove('correct');
+                    } else if (option.dataset.correct === 'true') {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                feedback.classList.remove('hidden');
+                if (hasCorrectAnswer) {
+                    feedback.textContent = 'Correct! Good job!';
+                    feedback.classList.add('text-green-600');
+                    feedback.classList.remove('text-red-600');
+                } else {
+                    feedback.textContent = 'Incorrect. See the highlighted correct answer.';
+                    feedback.classList.add('text-red-600');
+                    feedback.classList.remove('text-green-600');
+                }
+            });
+            
+            document.getElementById('quizResults').textContent = `You scored ${score} out of 5!`;
+        });
+        
+        // Mark selected quiz options
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Unselect all options in this question
+                let questionDiv = this.parentElement;
+                questionDiv.querySelectorAll('.quiz-option').forEach(opt => {
+                    opt.classList.remove('selected', 'bg-blue-100');
+                });
+                
+                // Mark this option as selected
+                this.classList.add('selected', 'bg-blue-100');
+            });
+        });
+        
+        // Convection simulation
+        function createConvectionSimulation() {
+            const container = document.getElementById('convectionSimulation');
+            const particleCount = 50;
+            let particles = [];
+            let animationId;
+            let isRunning = false;
+            
+            // Create particles
+            function createParticles() {
+                container.innerHTML = '';
+                particles = [];
+                
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // Random position
+                    const x = Math.random() * container.offsetWidth;
+                    const y = Math.random() * container.offsetHeight;
+                    
+                    particle.style.left = `${x}px`;
+                    particle.style.top = `${y}px`;
+                    
+                    container.appendChild(particle);
+                    particles.push({
+                        element: particle,
+                        x: x,
+                        y: y,
+                        vx: 0,
+                        vy: 0
+                    });
+                }
+            }
+            
+            // Update particle positions based on convection
+            function updateParticles() {
+                if (!isRunning) return;
+                
+                const width = container.offsetWidth;
+                const height = container.offsetHeight;
+                const centerX = width / 2;
+                
+                particles.forEach(particle => {
+                    // Simplified convection physics
+                    // Particles near bottom center move up
+                    // Particles at top move toward sides
+                    // Particles at sides move down
+                    
+                    const distanceFromCenterX = (particle.x - centerX) / centerX;
+                    const normalizedY = particle.y / height;
+                    
+                    // Bottom center -> move up
+                    if (normalizedY > 0.7 && Math.abs(distanceFromCenterX) < 0.3) {
+                        particle.vy -= 0.05 + Math.random() * 0.1;
+                    } 
+                    // Top -> move to sides
+                    else if (normalizedY < 0.3) {
+                        particle.vx += distanceFromCenterX < 0 ? -0.1 : 0.1;
+                    }
+                    // Sides -> move down
+                    else if (Math.abs(distanceFromCenterX) > 0.7) {
+                        particle.vy += 0.05 + Math.random() * 0.1;
+                    }
+                    
+                    // Add some randomness
+                    particle.vx += (Math.random() - 0.5) * 0.1;
+                    particle.vy += (Math.random() - 0.5) * 0.1;
+                    
+                    // Damping
+                    particle.vx *= 0.98;
+                    particle.vy *= 0.98;
+                    
+                    // Update position
+                    particle.x += particle.vx;
+                    particle.y += particle.vy;
+                    
+                    // Boundary check
+                    if (particle.x < 0) particle.x = 0;
+                    if (particle.x > width) particle.x = width;
+                    if (particle.y < 0) particle.y = 0;
+                    if (particle.y > height) particle.y = height;
+                    
+                    // Update DOM element position
+                    particle.element.style.left = `${particle.x}px`;
+                    particle.element.style.top = `${particle.y}px`;
+                });
+                
+                animationId = requestAnimationFrame(updateParticles);
+            }
+            
+            // Start simulation
+            document.getElementById('startSimulation').addEventListener('click', function() {
+                if (!isRunning) {
+                    isRunning = true;
+                    createParticles();
+                    updateParticles();
+                }
+            });
+            
+            // Stop simulation
+            document.getElementById('stopSimulation').addEventListener('click', function() {
+                isRunning = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+            });
+            
+            // Initial setup
+            createParticles();
+        }
+        
+        // Initialize the simulation when page loads
+        document.addEventListener('DOMContentLoaded', createConvectionSimulation);
+    </script>
+</body>
+</html>
